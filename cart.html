@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Giỏ hàng — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header container">
+    <div class="logo">Fashion Store</div>
+    <nav>
+      <a href="index.html">Trang chủ</a>
+      <a href="products.html">Sản phẩm</a>
+      <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>GIỎ HÀNG</h1>
+    <div id="cart-root"></div>
+  </main>
+
+  <script src="js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart('#cart-root');
+      updateCartCountUI();
+    });
+  </script>
+</body>
+</html>

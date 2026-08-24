@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sản phẩm — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">Fashion Store</div>
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="clothes.html">Quần áo</a>
+        <a href="accessories.html">Phụ kiện</a>
+        <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+        <a href="about.html">Giới thiệu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>SẢN PHẨM</h1>
+
+    <!-- Category cards -->
+    <section class="category-grid">
+      <a class="category-card" href="clothes.html">
+        <img src="image/ab_home_banner_1_img.webp" alt="Quần áo">
+        <div class="cat-info">
+          <h3>Quần áo</h3>
+          <p>Áo, Quần, Váy, Áo khoác</p>
+        </div>
+      </a>
+
+      <a class="category-card" href="accessories.html">
+        <img src="image/ab_home_banner_2_img.webp" alt="Phụ kiện">
+        <div class="cat-info">
+          <h3>Phụ kiện</h3>
+          <p>Nón, Túi, Kính, Phụ kiện thời trang</p>
+        </div>
+      </a>
+    </section>
+
+    <!-- Filter buttons (vẫn giữ) -->
+    <div class="filters" style="margin-top:20px">
+      <button class="btn" data-filter="all">Tất cả</button>
+      <button class="btn" data-filter="ao">Áo</button>
+      <button class="btn" data-filter="quan">Quần</button>
+      <button class="btn" data-filter="vay">Váy</button>
+      <button class="btn" data-filter="aokhoac">Áo khoác</button>
+      <button class="btn" data-filter="phukien">Phụ kiện</button>
+    </div>
+
+    <div id="products-grid" class="grid"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 Fashion Store</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Hiển thị tất cả sản phẩm ban đầu
+      renderProducts('#products-grid');
+      updateCartCountUI();
+
+      // filter button event listeners
+      document.querySelectorAll('.filters .btn').forEach(b => {
+        b.addEventListener('click', () => {
+          const cat = b.getAttribute('data-filter');
+          renderProducts('#products-grid', { category: cat });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

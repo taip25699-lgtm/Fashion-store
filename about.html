@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Giới thiệu — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header container">
+    <div class="logo">Fashion Store</div>
+    <nav>
+      <a href="index.html">Trang chủ</a>
+      <a href="products.html">Sản phẩm</a>
+      <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+      <a href="about.html">Giới thiệu</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>GIỚI THIỆU</h1>
+    <p>Fashion Store là cửa hàng thời trang trực tuyến dành cho những bạn trẻ yêu thích phong cách hiện đại và năng động. Với các sản phẩm đa dạng, thiết kế dễ phối đồ và mức giá hợp lý, chúng tôi mong muốn mang đến trải nghiệm mua sắm đơn giản và thuận tiện.</p>
+
+    <h2>Liên hệ với chúng tôi.</h2>
+    <h3> Bạn có câu hỏi hoặc cần hỗ trợ? Hãy để lại thông tin, Fashion Store sẽ phản hồi trong thời gian sớm nhất.</h3>
+    <form id="contact-form">
+      <label>Họ tên <input name="name" required></label>
+      <label>Email <input name="email" type="email" required></label>
+      <label>Nội dung <textarea name="message" required></textarea></label>
+      <button class="btn" type="submit">Gửi</button>
+    </form>
+  </main>
+
+  <script src="js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('contact-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const f = e.target;
+        if (!f.name.value.trim() || !f.email.value.trim() || !f.message.value.trim()) {
+          alert('Vui lòng điền đủ thông tin.');
+          return;
+        }
+        alert('Cảm ơn bạn! (Form demo — không gửi thật)');
+        f.reset();
+      });
+      updateCartCountUI();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">Fashion Store</div>
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+        <a href="about.html">Giới thiệu</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="banner">
+      <div class="container">
+        <h1>Bộ sưu tập mùa hè</h1>
+        <p>Phong cách trẻ trung — Giá hợp lý</p>
+        <a class="btn" href="products.html">Mua ngay</a>
+      </div>
+    </section>
+
+    <section class="featured container">
+      <h2>Sản phẩm nổi bật</h2>
+      <div id="featured-products" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 Fashion Store — Liên hệ: 2311560465@nttu.edu.vn</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script>
+    // render 3 sản phẩm nổi bật vào index (sử dụng products array trong script.js)
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts('#featured-products', { limit: 3, featured: true });
+      updateCartCountUI();
+    });
+  </script>
+</body>
+</html>
