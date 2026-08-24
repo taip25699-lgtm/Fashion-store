@@ -7,12 +7,12 @@ const products = [
   {id:3,  title:'Hoodie ấm',           category:'aokhoac', price:500000, img:'image/aohoodie2.webp', featured:true},
   {id:4,  title:'Váy xòe',             category:'vay',     price:400000, img:'image/vayxoe.jpg'},
   {id:5,  title:'Áo sơ mi',            category:'ao',      price:300000, img:'image/aosomi.webp'},
-  {id:11, title:'Nón Baseball Cap Kaki',       category:'phukien', price:120000, img:'image/nonkaki.webp'},
-  {id:12, title:'Ví Ngang Công Sở',  category:'phukien', price:220000, img:'image/vicongso.webp'},
-  {id:13, title:'Balo Rokin Aston',            category:'phukien', price:180000, img:'image/balo-laptop-rokin-aston-11.webp'},
-  {id:14, title:'Balo máy ảnh K&F',            category:'phukien', price:180000, img:'image/balomayanh.avif', featured:true},
-  {id:15, title:'Giày Thể Thao Nam',            category:'giay', price:180000, img:'image/giaynam.jpg'},
-  {id:16, title:'Giày Sandal Nữ',            category:'giay', price:180000, img:'image/giaynu.jpg'},
+  {id:11, title:'Nón Baseball Cap Kaki',       category:'phukien', price:90000, img:'image/nonkaki.webp'},
+  {id:12, title:'Ví Ngang Công Sở',  category:'phukien', price:280000, img:'image/vicongso.webp'},
+  {id:13, title:'Balo Rokin Aston',            category:'phukien', price:400000, img:'image/balo-laptop-rokin-aston-11.webp'},
+  {id:14, title:'Balo máy ảnh K&F',            category:'phukien', price:1300000, img:'image/balomayanh.avif', featured:true},
+  {id:15, title:'Giày Thể Thao Nam',            category:'giay', price:350000, img:'image/giaynam.jpg'},
+  {id:16, title:'Giày Sandal Nữ',            category:'giay', price:230000, img:'image/giaynu.jpg'},
 ];
 
 console.log('products count =', products.length);
