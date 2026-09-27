@@ -26,10 +26,33 @@ function updateCartCountUI(){
 }
 
 function loginUser(email, password){
+  const users = JSON.parse(localStorage.getItem('fs_users') || '[]');
+
+  // Tài khoản demo mặc định
   if(email === 'demo@fashionstore.vn' && password === '123456'){
-    localStorage.setItem('fs_user', JSON.stringify({email, name: 'Demo User', role: 'customer'}));
+    const user = {
+      email: email,
+      name: 'Demo User',
+      role: 'customer'
+    };
+
+    localStorage.setItem('fs_user', JSON.stringify(user));
     return true;
   }
+
+  const user = users.find(
+    u => u.email === email && u.password === password
+  );
+
+  if(user){
+    localStorage.setItem('fs_user', JSON.stringify({
+      email: user.email,
+      name: user.name,
+      role: user.role
+    }));
+    return true;
+  }
+
   return false;
 }
 
