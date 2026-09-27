@@ -1,466 +1,91 @@
-console.log('script.js loaded');
-
-const products = [
-  {id:1,  title:'Áo thun Basic',       category:'ao',      price:250000, img:'image/aothun.webp', featured:true},
-  {id:2,  title:'Quần jean',           category:'quan',    price:450000, img:'image/quanjean.webp'},
-  {id:3,  title:'Hoodie ấm',           category:'aokhoac', price:500000, img:'image/aohoodie2.webp', featured:true},
-  {id:4,  title:'Váy xòe',             category:'vay',     price:400000, img:'image/vayxoe.jpg'},
-  {id:5,  title:'Áo sơ mi',            category:'ao',      price:300000, img:'image/aosomi.webp'},
-  {id:11, title:'Nón Baseball Cap Kaki',       category:'phukien', price:90000, img:'image/nonkaki.webp'},
-  {id:12, title:'Ví Ngang Công Sở',  category:'phukien', price:280000, img:'image/vicongso.webp'},
-  {id:13, title:'Balo Rokin Aston',            category:'phukien', price:400000, img:'image/balo-laptop-rokin-aston-11.webp'},
-  {id:14, title:'Balo máy ảnh K&F',            category:'phukien', price:1300000, img:'image/balomayanh.avif', featured:true},
-  {id:15, title:'Giày Thể Thao Nam',            category:'giay', price:350000, img:'image/giaynam.jpg'},
-  {id:16, title:'Giày Sandal Nữ',            category:'giay', price:230000, img:'image/giaynu.jpg'},
-];
-
-function formatVND(n){ return n.toLocaleString('vi-VN') + 'đ'; }
-
-function getCart(){ return JSON.parse(localStorage.getItem('fs_cart')||'[]'); }
-function saveCart(c){ localStorage.setItem('fs_cart', JSON.stringify(c)); }
-function updateCartCountUI(){
-  const count = getCart().reduce((s,i)=>s+i.qty,0);
-  document.querySelectorAll('#cart-count').forEach(el => el.textContent = count);
-}
-
-function getUsers(){ return JSON.parse(localStorage.getItem('fs_users')||'[]'); }
-function saveUsers(users){ localStorage.setItem('fs_users', JSON.stringify(users)); }
-
-function registerUser(user){
-  const users = getUsers();
-  const email = (user.email || '').trim().toLowerCase();
-  if(!user.name || !user.email || !user.password || !user.phone){
-    return { success: false, message: 'Vui lòng điền đầy đủ thông tin.' };
-  }
-  const existed = users.some(u => u.email.toLowerCase() === email);
-  if(existed){ return { success:false, message:'Email này đã được đăng ký.' }; }
-
-  const newUser = {
-    id: Date.now(),
-    name: user.name,
-    email: email,
-    phone: user.phone,
-    password: user.password
-  };
-  users.push(newUser);
-  saveUsers(users);
-  localStorage.setItem('fs_user', JSON.stringify({ id:newUser.id, name:newUser.name, email:newUser.email, role:'customer' }));
-  return { success: true, message: 'Đăng ký thành công.' };
-}
-
-function loginUser(email, password){
-  const users = getUsers();
-  const user = users.find(u => u.email.toLowerCase() === String(email).trim().toLowerCase() && u.password === password);
-  if(user){
-    localStorage.setItem('fs_user', JSON.stringify({ id:user.id, name:user.name, email:user.email, role:'customer' }));
-    return true;
-  }
-  return false;
-}
-
-function getUser(){ return JSON.parse(localStorage.getItem('fs_user')||'null'); }
-
-function updateAuthUI(){
-  const user = getUser();
-  const authLink = document.getElementById('auth-link');
-  if(!authLink) return;
-  if(user){
-    authLink.textContent = `Xin chào, ${user.name}`;
-    authLink.href = '#';
-  } else {
-    authLink.textContent = 'Đăng nhập';
-    authLink.href = 'login.html';
-  }
-}
-
-const categoryGroups = {
-  clothes: ['ao', 'quan', 'vay', 'aokhoac'],
-  accessories: ['phukien', 'giay']
-};
-
-function renderProducts(selector, options = {}) {
-  const root = document.querySelector(selector);
-  if (!root) {
-    console.warn('renderProducts: selector not found ->', selector);
-    return 0;
-  }
-  let list = products.slice();
-
-  if (options.featured) list = list.filter(p => p.featured);
-  if (options.search) {
-    const keyword = options.search.toLowerCase();
-    list = list.filter(p => p.title.toLowerCase().includes(keyword));
-  }
-  if (options.category && options.category !== 'all') {
-    const cat = options.category;
-    if (Array.isArray(cat)) {
-      list = list.filter(p => cat.includes(p.category));
-    } else if (categoryGroups[cat]) {
-      list = list.filter(p => categoryGroups[cat].includes(p.category));
-    } else {
-      list = list.filter(p => p.category === cat);
-    }
-  }
-  if (options.limit) list = list.slice(0, options.limit);
-
-  if (list.length === 0) {
-    root.innerHTML = '<div class="empty-result">Không tìm thấy sản phẩm nào.</div>';
-    return 0;
-  }
-
-  root.innerHTML = list.map(p => `
-    <div class="card">
-      <img src="${p.img}" alt="${p.title}" onerror="this.onerror=null;this.src='images/placeholder.jpg'">
-      <h3>${p.title}</h3>
-      <p class="price">${formatVND(p.price)}</p>
-      <div>
-        <a class="btn" href="product-detail.html?id=${p.id}">Chi tiết</a>
-        <button class="btn" onclick="addToCart(${p.id},1)" style="margin-left:8px">Thêm giỏ</button>
-      </div>
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sản phẩm — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">Fashion Store</div>
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="clothes.html">Quần áo</a>
+        <a href="accessories.html">Phụ kiện</a>
+        <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+        <a href="about.html">Giới thiệu</a>
+        <a href="login.html" id="auth-link">Đăng nhập</a>
+      </nav>
     </div>
-  `).join('');
+  </header>
 
-  return list.length;
-}
+  <main class="container">
+    <h1>SẢN PHẨM</h1>
 
-function renderProductDetail(id, selector){
-  const p = products.find(x=>String(x.id)===String(id));
-  const root = document.querySelector(selector);
-  if(!root) return;
-  if(!p){ root.innerHTML = '<p>Không tìm thấy sản phẩm</p>'; return; }
+    <section class="category-grid">
+      <a class="category-card" href="clothes.html">
+        <img src="image/ab_home_banner_1_img.webp" alt="Quần áo">
+        <div class="cat-info"><h3>Quần áo</h3><p>Áo, Quần, Váy, Áo khoác</p></div>
+      </a>
+      <a class="category-card" href="accessories.html">
+        <img src="image/ab_home_banner_2_img.webp" alt="Phụ kiện">
+        <div class="cat-info"><h3>Phụ kiện</h3><p>Nón, Túi, Kính, Phụ kiện thời trang</p></div>
+      </a>
+    </section>
 
-  root.innerHTML = `
-    <div style="display:flex;gap:24px;flex-wrap:wrap">
-      <div style="flex:1;min-width:260px">
-        <img src="${p.img}" alt="${p.title}" style="width:100%;border-radius:8px" onerror="this.onerror=null;this.src='images/placeholder.jpg'">
-      </div>
-      <div style="flex:1;min-width:260px">
-        <h2>${p.title}</h2>
-        <p class="price">${formatVND(p.price)}</p>
-
-        ${ p.category === 'giay' ? `
-<div>
-  <label>Size:
-    <select id="size-select">
-      <option>38</option><option>39</option><option>40</option><option>41</option>
-    </select>
-  </label>
-</div>` : p.category === 'phukien' ? `
-<div style="margin-top:12px">
-  <label>Màu sắc:</label>
-  <div style="display:flex;gap:12px;margin-top:10px">
-    <button type="button" onclick="selectColor(this, 'Đen')" style="width:36px;height:36px;border-radius:50%;background:#111;border:3px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer" title="Đen"></button>
-    <button type="button" onclick="selectColor(this, 'Trắng')" style="width:36px;height:36px;border-radius:50%;background:#fff;border:3px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer" title="Trắng"></button>
-    <button type="button" onclick="selectColor(this, 'Nâu')" style="width:36px;height:36px;border-radius:50%;background:#8b4513;border:3px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer" title="Nâu"></button>
-    <button type="button" onclick="selectColor(this, 'Xanh')" style="width:36px;height:36px;border-radius:50%;background:#1e3a8a;border:3px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer" title="Xanh"></button>
-  </div>
-  <input type="hidden" id="color-select" value="">
-</div>` : `
-<div>
-  <label>Size:
-    <select id="size-select">
-      <option>S</option><option>M</option><option>L</option><option>XL</option>
-    </select>
-  </label>
-</div>` }
-
-        <div style="margin-top:12px">
-          Số lượng:
-          <button onclick="changeQtyInput(-1)">-</button>
-          <input id="qty-input" value="1" style="width:40px;text-align:center"/>
-          <button onclick="changeQtyInput(1)">+</button>
-        </div>
-
-        <div style="margin-top:12px">
-          <button class="btn" onclick="addCurrentProductToCart(${p.id})">THÊM VÀO GIỎ</button>
-        </div>
-      </div>
+    <div class="product-tools">
+      <label class="search-box" for="product-search">
+        <span>Tìm kiếm sản phẩm</span>
+        <input id="product-search" type="search" placeholder="Nhập tên sản phẩm..." autocomplete="off">
+      </label>
+      <span id="search-result-count" class="result-count"></span>
     </div>
-  `;
-}
 
-function selectColor(button, color) {
-  document.querySelectorAll('[onclick^="selectColor"]').forEach(btn => btn.style.outline = 'none');
-  button.style.outline = '3px solid #ff6b6b';
-  button.style.outlineOffset = '2px';
-  const input = document.getElementById('color-select');
-  if (input) input.value = color;
-}
-
-function addCurrentProductToCart(productId) {
-  const p = products.find(x => x.id === productId);
-  if (!p) return;
-  const qtyInput = document.getElementById('qty-input');
-  const qty = parseInt(qtyInput?.value || 1);
-  let variant = {};
-  if (p.category === 'giay') {
-    const size = document.getElementById('size-select')?.value;
-    variant.size = size;
-  } else if (['ao','quan','vay','aokhoac'].includes(p.category)) {
-    const size = document.getElementById('size-select')?.value;
-    variant.size = size;
-  } else if (p.category === 'phukien') {
-    const color = document.getElementById('color-select')?.value;
-    if (!color) {
-      alert('Vui lòng chọn màu');
-      return;
-    }
-    variant.color = color;
-  }
-  addToCart(productId, qty, variant);
-}
-
-function changeQtyInput(delta){
-  const inp = document.getElementById('qty-input');
-  if(!inp) return;
-  let v = parseInt(inp.value||'1') + delta;
-  if(isNaN(v) || v < 1) v = 1;
-  inp.value = v;
-}
-
-function addToCart(productId, qty=1, variant={}){
-  const p = products.find(x => x.id === productId);
-  if(!p){ alert('Sản phẩm không tồn tại'); return; }
-  const cart = getCart();
-  const idx = cart.findIndex(item =>
-    item.id === productId &&
-    item.variant?.size === variant.size &&
-    item.variant?.color === variant.color
-  );
-  if (idx >= 0) {
-    cart[idx].qty += qty;
-  } else {
-    cart.push({ id: productId, qty: qty, variant: variant });
-  }
-  saveCart(cart);
-  updateCartCountUI();
-  alert('Đã thêm vào giỏ');
-}
-
-function renderCart(selector){
-  const root = document.querySelector(selector);
-  if(!root) return;
-  const cart = getCart();
-  if(cart.length === 0){
-    root.innerHTML = '<p>Giỏ hàng rỗng.</p>';
-    return;
-  }
-  let html = '<div class="cart-list">';
-  let total = 0;
-
-  cart.forEach((item, index) => {
-    const p = products.find(x => x.id === item.id);
-    if(!p) return;
-    const sub = p.price * item.qty;
-    total += sub;
-    let variantText = '';
-    if(item.variant?.size) variantText += `<p>Size: ${item.variant.size}</p>`;
-    if(item.variant?.color) variantText += `<p>Màu: ${item.variant.color}</p>`;
-    html += `
-      <div class="card cart-item-row">
-        <img src="${p.img}" alt="${p.title}" onerror="this.onerror=null;this.src='images/placeholder.jpg'" />
-        <div class="cart-item-content">
-          <h3>${p.title}</h3>
-          ${variantText}
-          <p>${formatVND(p.price)} × 
-            <button onclick="updateCartQty(${index}, ${item.qty - 1})">-</button>
-            ${item.qty}
-            <button onclick="updateCartQty(${index}, ${item.qty + 1})">+</button>
-          </p>
-        </div>
-        <div class="cart-item-price">
-          <p>${formatVND(sub)}</p>
-          <button onclick="removeFromCart(${index})">Xóa</button>
-        </div>
-      </div>
-    `;
-  });
-  html += `</div><div class="checkout-summary"><h3>Tổng: ${formatVND(total)}</h3><a class="btn" href="checkout.html">Thanh toán</a></div>`;
-  root.innerHTML = html;
-}
-
-function updateCartQty(index, qty){
-  const cart = getCart();
-  if(index < 0 || index >= cart.length) return;
-  if(qty <= 0){ cart.splice(index,1); } else { cart[index].qty = qty; }
-  saveCart(cart);
-  if(document.querySelector('#cart-root')) renderCart('#cart-root');
-  updateCartCountUI();
-}
-
-function removeFromCart(index){
-  const cart = getCart();
-  if(index < 0 || index >= cart.length) return;
-  cart.splice(index,1);
-  saveCart(cart);
-  if(document.querySelector('#cart-root')) renderCart('#cart-root');
-  updateCartCountUI();
-}
-
-function renderCheckout(selector){
-  const root = document.querySelector(selector);
-  if(!root) return;
-  const cart = getCart();
-  if(cart.length === 0){
-    root.innerHTML = '<p>Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.</p><a class="btn" href="products.html">Quay lại mua sắm</a>';
-    return;
-  }
-
-  let total = 0;
-  const itemsHtml = cart.map(item => {
-    const p = products.find(x => x.id === item.id);
-    if(!p) return '';
-    const sub = p.price * item.qty;
-    total += sub;
-    const variantInfo = item.variant?.size ? `Size: ${item.variant.size}` : item.variant?.color ? `Màu: ${item.variant.color}` : '';
-    return `
-      <div class="checkout-item">
-        <div>
-          <strong>${p.title}</strong><br>
-          <span>${variantInfo}</span>
-        </div>
-        <div>${item.qty} x ${formatVND(p.price)}</div>
-        <div>${formatVND(sub)}</div>
-      </div>
-    `;
-  }).join('');
-
-  root.innerHTML = `
-    <div class="checkout-layout">
-      <form id="checkout-form" class="checkout-form">
-        <h3>Thông tin nhận hàng</h3>
-        <label>Họ tên<input name="name" required placeholder="Nguyễn Văn A"></label>
-        <label>Số điện thoại<input name="phone" required placeholder="0912 345 678"></label>
-        <label>Địa chỉ nhận hàng<textarea name="address" required placeholder="Số nhà, đường, phường, quận..."></textarea></label>
-        <label>Ghi chú<textarea name="note" placeholder="Ghi chú cho đơn hàng..."></textarea></label>
-        <button class="btn" type="submit">Xác nhận đặt hàng</button>
-      </form>
-
-      <div class="checkout-summary-box">
-        <h3>Đơn hàng</h3>
-        ${itemsHtml}
-        <div class="total-row"><strong>Tổng tiền:</strong> <span>${formatVND(total)}</span></div>
-      </div>
+    <div class="filters" style="margin-top:20px">
+      <button class="btn" data-filter="all">Tất cả</button>
+      <button class="btn" data-filter="ao">Áo</button>
+      <button class="btn" data-filter="quan">Quần</button>
+      <button class="btn" data-filter="vay">Váy</button>
+      <button class="btn" data-filter="aokhoac">Áo khoác</button>
+      <button class="btn" data-filter="phukien">Phụ kiện</button>
+      <button class="btn" data-filter="giay">Giày</button>
     </div>
-  `;
 
-  document.getElementById('checkout-form').addEventListener('submit', event => {
-    event.preventDefault();
-    const form = event.target;
-    const order = {
-      id: 'DH' + Date.now(),
-      customer: form.name.value.trim(),
-      phone: form.phone.value.trim(),
-      address: form.address.value.trim(),
-      note: form.note.value.trim(),
-      date: new Date().toLocaleString('vi-VN'),
-      status: 'Chờ xác nhận',
-      total: total,
-      items: cart
-    };
-    localStorage.setItem('fs_last_order', JSON.stringify(order));
-    localStorage.removeItem('fs_cart');
-    updateCartCountUI();
-    window.location.href = 'order-detail.html';
-  });
-}
+    <div id="products-grid" class="grid"></div>
+  </main>
 
-function renderOrderDetail(selector){
-  const root = document.querySelector(selector);
-  if(!root) return;
+  <footer class="site-footer"><div class="container"><p>© 2026 Fashion Store</p></div></footer>
 
-  const order = JSON.parse(localStorage.getItem('fs_last_order') || JSON.stringify({
-    id: 'DH20260627001',
-    customer: 'Lê Thị Lan',
-    phone: '0901234567',
-    address: '12 Nguyễn Huệ, Q.1, TP.HCM',
-    note: 'Giao giờ hành chính',
-    date: '27/06/2026 14:20:10',
-    status: 'Đang giao',
-    total: 1560000,
-    items: [
-      { id: 1, qty: 1, variant: { size: 'M' } },
-      { id: 12, qty: 1, variant: { color: 'Đen' } }
-    ]
-  }));
+  <script src="js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let activeCategory = 'all';
+      const search = document.getElementById('product-search');
+      const resultCount = document.getElementById('search-result-count');
 
-  const orderLines = order.items.map(item => {
-    const p = products.find(x => x.id === item.id);
-    if(!p) return '';
-    return `
-      <tr>
-        <td>${p.title}</td>
-        <td>${item.variant?.size || item.variant?.color || '—'}</td>
-        <td>${item.qty}</td>
-        <td>${formatVND(p.price)}</td>
-        <td>${formatVND(p.price * item.qty)}</td>
-      </tr>
-    `;
-  }).join('');
+      function showProducts() {
+        const keyword = search.value.trim();
+        const visibleCount = renderProducts('#products-grid', {
+          category: activeCategory,
+          search: keyword
+        });
+        resultCount.textContent = `${visibleCount} sản phẩm`;
+      }
 
-  const statusText = order.status || 'Chờ xác nhận';
-  const statuses = ['Chờ xác nhận', 'Đã xác nhận', 'Đang giao', 'Đã giao'];
-  const currentIndex = statuses.indexOf(statusText) >= 0 ? statuses.indexOf(statusText) : 0;
-
-  const statusHtml = statuses.map((s, idx) => `
-    <li class="timeline-step ${idx <= currentIndex ? 'done' : ''}">
-      <span>${s}</span>
-    </li>
-  `).join('');
-
-  root.innerHTML = `
-    <div class="order-detail-card">
-      <div class="order-header-row">
-        <div>
-          <h2>Chi tiết đơn hàng</h2>
-          <p>Mã đơn: <strong>${order.id}</strong></p>
-        </div>
-        <button class="btn btn-outline">Đơn hàng của tôi</button>
-      </div>
-
-      <div class="status-box">
-        <h3>Trạng thái đơn hàng</h3>
-        <ul class="timeline">${statusHtml}</ul>
-      </div>
-
-      <div class="order-meta">
-        <div><strong>Người nhận:</strong> ${order.customer}</div>
-        <div><strong>Số điện thoại:</strong> ${order.phone}</div>
-        <div><strong>Địa chỉ:</strong> ${order.address}</div>
-        <div><strong>Ngày đặt:</strong> ${order.date}</div>
-      </div>
-
-      <table class="order-table">
-        <thead>
-          <tr>
-            <th>Sản phẩm</th>
-            <th>Phân loại</th>
-            <th>Số lượng</th>
-            <th>Đơn giá</th>
-            <th>Thành tiền</th>
-          </tr>
-        </thead>
-        <tbody>${orderLines}</tbody>
-      </table>
-
-      <div class="order-total-row">
-        <strong>Tổng tiền:</strong>
-        <span>${formatVND(order.total || 0)}</span>
-      </div>
-    </div>
-  `;
-}
-
-function countByCategory(cat){
-  if(!cat || cat === 'all') return products.length;
-  if(Array.isArray(cat)) return products.filter(p => cat.includes(p.category)).length;
-  if(categoryGroups[cat]) return products.filter(p => categoryGroups[cat].includes(p.category)).length;
-  return products.filter(p => p.category === cat).length;
-}
-
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    updateCartCountUI();
-    updateAuthUI();
-  });
-}
+      showProducts();
+      updateCartCountUI();
+      updateAuthUI();
+      search.addEventListener('input', showProducts);
+      document.querySelectorAll('.filters .btn').forEach(button => {
+        button.addEventListener('click', () => {
+          activeCategory = button.dataset.filter;
+          showProducts();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
