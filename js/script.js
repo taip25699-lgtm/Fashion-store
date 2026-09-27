@@ -340,10 +340,14 @@ function removeFromCart(index){
 }
 
 function checkout(){
-  alert('Đây là demo — chưa có thanh toán thật. Cảm ơn bạn!');
-  localStorage.removeItem('fs_cart');
-  if(document.querySelector('#cart-root')) renderCart('#cart-root');
-  updateCartCountUI();
+  const cart = getCart();
+
+  if(cart.length === 0){
+    alert('Giỏ hàng đang trống.');
+    return;
+  }
+
+  window.location.href = 'thanh-toan.html';
 }
 
 function countByCategory(cat){
@@ -351,4 +355,61 @@ function countByCategory(cat){
   if(Array.isArray(cat)) return products.filter(p => cat.includes(p.category)).length;
   if(categoryGroups[cat]) return products.filter(p => categoryGroups[cat].includes(p.category)).length;
   return products.filter(p => p.category === cat).length;
+}
+
+function getOrders(){
+  return JSON.parse(localStorage.getItem('fs_orders') || '[]');
+}
+
+function saveOrders(orders){
+  localStorage.setItem('fs_orders', JSON.stringify(orders));
+}
+
+function createOrder(customerInfo){
+
+  const cart = getCart();
+
+  if(cart.length === 0){
+    return null;
+  }
+
+  const productsInOrder = cart.map(item => {
+
+    const p = products.find(x => x.id === item.id);
+
+    return {
+      id: item.id,
+      title: p ? p.title : 'Sản phẩm',
+      price: p ? p.price : 0,
+      qty: item.qty,
+      variant: item.variant || {}
+    };
+
+  });
+
+  const total = productsInOrder.reduce(
+    (sum, item) => sum + item.price * item.qty,
+    0
+  );
+
+  const order = {
+    id: 'DH' + Date.now(),
+    date: new Date().toLocaleString('vi-VN'),
+    items: productsInOrder,
+    total: total,
+    customer: customerInfo,
+    status: 'Đã đặt hàng'
+  };
+
+  const orders = getOrders();
+
+  orders.unshift(order);
+
+  saveOrders(orders);
+
+  localStorage.removeItem('fs_cart');
+
+  updateCartCountUI();
+
+  return order;
 }
