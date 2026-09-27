@@ -1,4 +1,3 @@
-
 console.log('script.js loaded');
 
 const products = [
@@ -26,36 +25,67 @@ function updateCartCountUI(){
   document.querySelectorAll('#cart-count').forEach(el => el.textContent = count);
 }
 
-// nhóm category (để clothes bao gồm nhiều loại)
+function loginUser(email, password){
+  if(email === 'demo@fashionstore.vn' && password === '123456'){
+    localStorage.setItem('fs_user', JSON.stringify({email, name: 'Demo User', role: 'customer'}));
+    return true;
+  }
+  return false;
+}
+
+function getUser(){
+  return JSON.parse(localStorage.getItem('fs_user')||'null');
+}
+
+function updateAuthUI(){
+  const user = getUser();
+  const authLink = document.getElementById('auth-link');
+  if(!authLink) return;
+  if(user){
+    authLink.textContent = `Xin chào, ${user.name}`;
+    authLink.href = '#';
+  } else {
+    authLink.textContent = 'Đăng nhập';
+    authLink.href = 'login.html';
+  }
+}
+
 const categoryGroups = {
   clothes: ['ao', 'quan', 'vay', 'aokhoac'],
   accessories: ['phukien', 'giay']
 };
 
-function renderProducts(selector, options = {}) {
+function renderProducts(selector, options = {}){
   const root = document.querySelector(selector);
-  if (!root) {
+  if(!root){
     console.warn('renderProducts: selector not found ->', selector);
-    return;
+    return 0;
   }
   let list = products.slice();
 
-  if (options.featured) list = list.filter(p => p.featured);
-
-  if (options.category && options.category !== 'all') {
+  if(options.featured) list = list.filter(p => p.featured);
+  if(options.search){
+    const keyword = options.search.toLowerCase();
+    list = list.filter(p => p.title.toLowerCase().includes(keyword));
+  }
+  if(options.category && options.category !== 'all'){
     const cat = options.category;
-    if (Array.isArray(cat)) {
+    if(Array.isArray(cat)){
       list = list.filter(p => cat.includes(p.category));
-    } else if (categoryGroups[cat]) {
+    } else if(categoryGroups[cat]){
       list = list.filter(p => categoryGroups[cat].includes(p.category));
     } else {
       list = list.filter(p => p.category === cat);
     }
   }
+  if(options.limit) list = list.slice(0, options.limit);
 
-  if (options.limit) list = list.slice(0, options.limit);
+  console.log('renderProducts -> selector:', selector, 'category:', options.category || 'all', 'search:', options.search || '', 'items:', list.length);
 
-  console.log('renderProducts -> selector:', selector, 'category:', options.category || 'all', 'items:', list.length);
+  if(list.length === 0){
+    root.innerHTML = '<div class="empty-result">Không tìm thấy sản phẩm nào.</div>';
+    return 0;
+  }
 
   root.innerHTML = list.map(p => `
     <div class="card">
@@ -68,6 +98,7 @@ function renderProducts(selector, options = {}) {
       </div>
     </div>
   `).join('');
+  return list.length;
 }
 
 function renderProductDetail(id, selector){
@@ -159,38 +190,32 @@ function renderProductDetail(id, selector){
     </div>
   `;
 }
-function selectColor(button, color) {
+
+function selectColor(button, color){
   document.querySelectorAll('[onclick^="selectColor"]').forEach(btn => {
     btn.style.outline = 'none';
   });
-
   button.style.outline = '3px solid #ff6b6b';
   button.style.outlineOffset = '2px';
-
   const input = document.getElementById('color-select');
-  if (input) input.value = color;
+  if(input) input.value = color;
 }
 
-function addCurrentProductToCart(productId) {
+function addCurrentProductToCart(productId){
   const p = products.find(x => x.id === productId);
-  if (!p) return;
+  if(!p) return;
   const qtyInput = document.getElementById('qty-input');
   const qty = parseInt(qtyInput?.value || 1);
   let variant = {};
-  // Giày → size 38/39/40/41
-  if (p.category === 'giay') {
+  if(p.category === 'giay'){
     const size = document.getElementById('size-select')?.value;
     variant.size = size;
-  }
-  // Quần áo → size S/M/L/XL
-  else if (['ao', 'quan', 'vay', 'aokhoac'].includes(p.category)) {
+  } else if(['ao', 'quan', 'vay', 'aokhoac'].includes(p.category)){
     const size = document.getElementById('size-select')?.value;
     variant.size = size;
-  }
-  // Phụ kiện → màu
-  else if (p.category === 'phukien') {
+  } else if(p.category === 'phukien'){
     const color = document.getElementById('color-select')?.value;
-    if (!color) {
+    if(!color){
       alert('Vui lòng chọn màu');
       return;
     }
@@ -214,7 +239,6 @@ function addToCart(productId, qty=1, variant={}){
     return;
   }
   const cart = getCart();
-
   const idx = cart.findIndex(item =>
     item.id === productId &&
     item.variant?.size === variant.size &&
@@ -223,11 +247,7 @@ function addToCart(productId, qty=1, variant={}){
   if(idx >= 0){
     cart[idx].qty += qty;
   } else {
-    cart.push({
-      id: productId,
-      qty: qty,
-      variant: variant
-    });
+    cart.push({id: productId, qty: qty, variant: variant});
   }
   saveCart(cart);
   updateCartCountUI();
@@ -251,81 +271,48 @@ function renderCart(selector){
     const sub = p.price * item.qty;
     total += sub;
     let variantText = '';
-    if(item.variant?.size){
-      variantText += `<p>Size: ${item.variant.size}</p>`;
-    }
-    if(item.variant?.color){
-      variantText += `<p>Màu: ${item.variant.color}</p>`;
-    }
+    if(item.variant?.size){ variantText += `<p>Size: ${item.variant.size}</p>`; }
+    if(item.variant?.color){ variantText += `<p>Màu: ${item.variant.color}</p>`; }
     html += `
       <div class="card" style="display:flex;gap:12px;align-items:center">
-        <img
-          src="${p.img}"
-          alt="${p.title}"
-          style="width:120px;height:80px;object-fit:cover"
-          onerror="this.onerror=null;this.src='images/placeholder.jpg'"
-        />
+        <img src="${p.img}" alt="${p.title}" style="width:120px;height:80px;object-fit:cover" onerror="this.onerror=null;this.src='images/placeholder.jpg'" />
         <div style="flex:1">
           <h3>${p.title}</h3>
           ${variantText}
           <p>
             ${formatVND(p.price)} ×
-            <button onclick="updateCartQty(${index}, ${item.qty - 1})">
-              -
-            </button>
+            <button onclick="updateCartQty(${index}, ${item.qty - 1})">-</button>
             ${item.qty}
-            <button onclick="updateCartQty(${index}, ${item.qty + 1})">
-              +
-            </button>
+            <button onclick="updateCartQty(${index}, ${item.qty + 1})">+</button>
           </p>
         </div>
         <div style="text-align:right">
           <p>${formatVND(sub)}</p>
-          <p>
-            <button onclick="removeFromCart(${index})">
-              Xóa
-            </button>
-          </p>
+          <p><button onclick="removeFromCart(${index})">Xóa</button></p>
         </div>
       </div>
     `;
   });
-  html += `
-    </div>
-    <div style="margin-top:16px">
-      <h3>Tổng: ${formatVND(total)}</h3>
-      <button class="btn" onclick="checkout()">
-        Thanh toán
-      </button>
-    </div>
-  `;
+  html += `</div><div style="margin-top:16px"><h3>Tổng: ${formatVND(total)}</h3><button class="btn" onclick="checkout()">Thanh toán</button></div>`;
   root.innerHTML = html;
 }
 
 function updateCartQty(index, qty){
   const cart = getCart();
   if(index < 0 || index >= cart.length) return;
-  if(qty <= 0){
-    cart.splice(index, 1);
-  } else {
-    cart[index].qty = qty;
-  }
+  if(qty <= 0){ cart.splice(index, 1);
+  } else { cart[index].qty = qty; }
   saveCart(cart);
-  if(document.querySelector('#cart-root')){
-    renderCart('#cart-root');
-  }
+  if(document.querySelector('#cart-root')){ renderCart('#cart-root'); }
   updateCartCountUI();
 }
 
 function removeFromCart(index){
   const cart = getCart();
-
   if(index < 0 || index >= cart.length) return;
   cart.splice(index, 1);
   saveCart(cart);
-  if(document.querySelector('#cart-root')){
-    renderCart('#cart-root');
-  }
+  if(document.querySelector('#cart-root')){ renderCart('#cart-root'); }
   updateCartCountUI();
 }
 
@@ -338,7 +325,7 @@ function checkout(){
 
 function countByCategory(cat){
   if(!cat || cat === 'all') return products.length;
-  if (Array.isArray(cat)) return products.filter(p => cat.includes(p.category)).length;
-  if (categoryGroups[cat]) return products.filter(p => categoryGroups[cat].includes(p.category)).length;
+  if(Array.isArray(cat)) return products.filter(p => cat.includes(p.category)).length;
+  if(categoryGroups[cat]) return products.filter(p => categoryGroups[cat].includes(p.category)).length;
   return products.filter(p => p.category === cat).length;
 }
