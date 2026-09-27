@@ -1,6 +1,6 @@
 console.log('script.js loaded');
 
-const products = [
+const defaultProducts = [
   {id:1,  title:'Áo thun Basic',       category:'ao',      price:250000, img:'image/aothun.webp', featured:true},
   {id:2,  title:'Quần jean',           category:'quan',    price:450000, img:'image/quanjean.webp'},
   {id:3,  title:'Hoodie ấm',           category:'aokhoac', price:500000, img:'image/aohoodie2.webp', featured:true},
@@ -14,6 +14,14 @@ const products = [
   {id:16, title:'Giày Sandal Nữ',            category:'giay', price:230000, img:'image/giaynu.jpg'},
 ];
 
+let products = JSON.parse(
+  localStorage.getItem('fs_products') || 'null'
+);
+
+if(!Array.isArray(products)){
+  products = defaultProducts;
+  localStorage.setItem('fs_products', JSON.stringify(products));
+}
 console.log('products count =', products.length);
 
 function formatVND(n){ return n.toLocaleString('vi-VN') + 'đ' }
