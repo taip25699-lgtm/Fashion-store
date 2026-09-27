@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  />
+
+  <title>Lịch sử đơn hàng — Fashion Store</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+
+    .order-card {
+      background: #fff;
+      padding: 20px;
+      margin: 16px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 12px;
+    }
+
+    .order-status {
+      color: #16803c;
+      font-weight: 600;
+    }
+
+    .order-product {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-total {
+      text-align: right;
+      margin-top: 14px;
+      color: #ff6b6b;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .order-info {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+  <div class="container">
+
+    <div class="logo">
+      Fashion Store
+    </div>
+
+    <nav>
+      <a href="index.html">Trang chủ</a>
+
+      <a href="products.html">
+        Sản phẩm
+      </a>
+
+      <a href="cart.html">
+        Giỏ hàng
+        <span id="cart-count">0</span>
+      </a>
+
+      <a href="account.html">
+        Tài khoản
+      </a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+  <h1>LỊCH SỬ ĐƠN HÀNG</h1>
+
+  <div id="orders-root"></div>
+
+</main>
+
+
+<script src="js/script.js"></script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  updateCartCountUI();
+
+  const root =
+    document.getElementById('orders-root');
+
+  const orders = getOrders();
+
+
+  if(orders.length === 0){
+
+    root.innerHTML = `
+      <div class="empty-result">
+
+        <p>Bạn chưa có đơn hàng nào.</p>
+
+        <a class="btn" href="products.html">
+          Mua sắm ngay
+        </a>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  root.innerHTML = orders.map(order => {
+
+    const items = order.items.map(item => {
+
+      let variant = '';
+
+      if(item.variant?.size){
+        variant += `Size: ${item.variant.size} `;
+      }
+
+      if(item.variant?.color){
+        variant += `Màu: ${item.variant.color}`;
+      }
+
+
+      return `
+        <div class="order-product">
+
+          <div>
+
+            <strong>
+              ${item.title}
+            </strong>
+
+            <div>
+              ${formatVND(item.price)}
+              × ${item.qty}
+            </div>
+
+            <small>
+              ${variant}
+            </small>
+
+          </div>
+
+          <strong>
+            ${formatVND(item.price * item.qty)}
+          </strong>
+
+        </div>
+      `;
+
+    }).join('');
+
+
+    return `
+      <div class="order-card">
+
+        <div class="order-header">
+
+          <div>
+            <strong>
+              Mã đơn: ${order.id}
+            </strong>
+
+            <div>
+              ${order.date}
+            </div>
+          </div>
+
+          <div class="order-status">
+            ${order.status}
+          </div>
+
+        </div>
+
+
+        ${items}
+
+
+        <div class="order-info">
+
+          Người nhận:
+          ${order.customer.name}
+
+          <br>
+
+          SĐT:
+          ${order.customer.phone}
+
+          <br>
+
+          Địa chỉ:
+          ${order.customer.address}
+
+          <br>
+
+          Thanh toán:
+          ${
+            order.customer.payment === 'COD'
+              ? 'Thanh toán khi nhận hàng'
+              : 'Chuyển khoản ngân hàng'
+          }
+
+        </div>
+
+
+        <div class="order-total">
+
+          Tổng:
+          ${formatVND(order.total)}
+
+        </div>
+
+      </div>
+    `;
+
+  }).join('');
+
+});
+
+</script>
+
+</body>
+</html>
