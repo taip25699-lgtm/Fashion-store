@@ -17,6 +17,7 @@
         <a href="accessories.html">Phụ kiện</a>
         <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
         <a href="about.html">Giới thiệu</a>
+        <a href="login.html" id="auth-link">Đăng nhập</a>
       </nav>
     </div>
   </header>
@@ -24,26 +25,25 @@
   <main class="container">
     <h1>SẢN PHẨM</h1>
 
-    <!-- Category cards -->
     <section class="category-grid">
       <a class="category-card" href="clothes.html">
         <img src="image/ab_home_banner_1_img.webp" alt="Quần áo">
-        <div class="cat-info">
-          <h3>Quần áo</h3>
-          <p>Áo, Quần, Váy, Áo khoác</p>
-        </div>
+        <div class="cat-info"><h3>Quần áo</h3><p>Áo, Quần, Váy, Áo khoác</p></div>
       </a>
-
       <a class="category-card" href="accessories.html">
         <img src="image/ab_home_banner_2_img.webp" alt="Phụ kiện">
-        <div class="cat-info">
-          <h3>Phụ kiện</h3>
-          <p>Nón, Túi, Kính, Phụ kiện thời trang</p>
-        </div>
+        <div class="cat-info"><h3>Phụ kiện</h3><p>Nón, Túi, Kính, Phụ kiện thời trang</p></div>
       </a>
     </section>
 
-    <!-- Filter buttons (vẫn giữ) -->
+    <div class="product-tools">
+      <label class="search-box" for="product-search">
+        <span>Tìm kiếm sản phẩm</span>
+        <input id="product-search" type="search" placeholder="Nhập tên sản phẩm..." autocomplete="off">
+      </label>
+      <span id="search-result-count" class="result-count"></span>
+    </div>
+
     <div class="filters" style="margin-top:20px">
       <button class="btn" data-filter="all">Tất cả</button>
       <button class="btn" data-filter="ao">Áo</button>
@@ -51,29 +51,38 @@
       <button class="btn" data-filter="vay">Váy</button>
       <button class="btn" data-filter="aokhoac">Áo khoác</button>
       <button class="btn" data-filter="phukien">Phụ kiện</button>
+      <button class="btn" data-filter="giay">Giày</button>
     </div>
 
     <div id="products-grid" class="grid"></div>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© 2026 Fashion Store</p>
-    </div>
-  </footer>
+  <footer class="site-footer"><div class="container"><p>© 2026 Fashion Store</p></div></footer>
 
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Hiển thị tất cả sản phẩm ban đầu
-      renderProducts('#products-grid');
-      updateCartCountUI();
+      let activeCategory = 'all';
+      const search = document.getElementById('product-search');
+      const resultCount = document.getElementById('search-result-count');
 
-      // filter button event listeners
-      document.querySelectorAll('.filters .btn').forEach(b => {
-        b.addEventListener('click', () => {
-          const cat = b.getAttribute('data-filter');
-          renderProducts('#products-grid', { category: cat });
+      function showProducts() {
+        const keyword = search.value.trim();
+        const visibleCount = renderProducts('#products-grid', {
+          category: activeCategory,
+          search: keyword
+        });
+        resultCount.textContent = `${visibleCount} sản phẩm`;
+      }
+
+      showProducts();
+      updateCartCountUI();
+      updateAuthUI();
+      search.addEventListener('input', showProducts);
+      document.querySelectorAll('.filters .btn').forEach(button => {
+        button.addEventListener('click', () => {
+          activeCategory = button.dataset.filter;
+          showProducts();
         });
       });
     });
