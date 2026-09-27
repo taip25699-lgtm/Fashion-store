@@ -1,1 +1,159 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
 
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">Fashion Store</div>
+
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="cart.html">
+          Giỏ hàng <span id="cart-count">0</span>
+        </a>
+        <a href="login.html">Đăng nhập</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container auth-page">
+    <div class="auth-card">
+
+      <h1>ĐĂNG KÝ</h1>
+
+      <p class="auth-note">
+        Tạo tài khoản để mua sắm tại Fashion Store.
+      </p>
+
+      <form id="register-form" class="auth-form">
+
+        <label for="register-name">Họ và tên</label>
+        <input
+          id="register-name"
+          name="name"
+          type="text"
+          required
+          placeholder="Nhập họ và tên"
+        />
+
+        <label for="register-email">Email</label>
+        <input
+          id="register-email"
+          name="email"
+          type="email"
+          required
+          placeholder="you@example.com"
+        />
+
+        <label for="register-password">Mật khẩu</label>
+        <input
+          id="register-password"
+          name="password"
+          type="password"
+          required
+          minlength="6"
+          placeholder="Ít nhất 6 ký tự"
+        />
+
+        <label for="register-confirm">Xác nhận mật khẩu</label>
+        <input
+          id="register-confirm"
+          name="confirm"
+          type="password"
+          required
+          minlength="6"
+          placeholder="Nhập lại mật khẩu"
+        />
+
+        <button class="btn" type="submit">
+          Đăng ký
+        </button>
+
+        <p id="register-message" class="form-message"></p>
+
+      </form>
+
+      <p class="auth-note">
+        Đã có tài khoản?
+        <a href="login.html">Đăng nhập</a>
+      </p>
+
+    </div>
+  </main>
+
+  <script src="js/script.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      updateCartCountUI();
+
+      document.getElementById('register-form').addEventListener('submit', event => {
+
+        event.preventDefault();
+
+        const form = event.target;
+        const message = document.getElementById('register-message');
+
+        const name = form.name.value.trim();
+        const email = form.email.value.trim().toLowerCase();
+        const password = form.password.value;
+        const confirm = form.confirm.value;
+
+        if(password !== confirm){
+          message.className = 'form-message error';
+          message.textContent = 'Mật khẩu xác nhận không khớp.';
+          return;
+        }
+
+        let users = JSON.parse(
+          localStorage.getItem('fs_users') || '[]'
+        );
+
+        const existed = users.some(
+          user => user.email === email
+        );
+
+        if(existed){
+          message.className = 'form-message error';
+          message.textContent = 'Email này đã được đăng ký.';
+          return;
+        }
+
+        const newUser = {
+          name: name,
+          email: email,
+          password: password,
+          role: 'customer'
+        };
+
+        users.push(newUser);
+
+        localStorage.setItem(
+          'fs_users',
+          JSON.stringify(users)
+        );
+
+        message.className = 'form-message success';
+        message.textContent =
+          'Đăng ký thành công. Đang chuyển đến trang đăng nhập...';
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1000);
+
+      });
+
+    });
+  </script>
+
+</body>
+</html>
