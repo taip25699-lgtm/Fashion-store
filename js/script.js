@@ -66,7 +66,7 @@ function updateAuthUI(){
   if(!authLink) return;
   if(user){
     authLink.textContent = `Xin chào, ${user.name}`;
-    authLink.href = '#';
+    authLink.href = 'account.html';
   } else {
     authLink.textContent = 'Đăng nhập';
     authLink.href = 'login.html';
