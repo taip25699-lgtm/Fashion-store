@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  />
+
+  <title>Quản lý sản phẩm — Admin</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .admin-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .admin-box h2 {
+      margin-top: 0;
+    }
+
+    .admin-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .admin-form label {
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .admin-form input,
+    .admin-form select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font: inherit;
+    }
+
+    .admin-form input[type="checkbox"] {
+      width: auto;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-secondary {
+      background: #777;
+    }
+
+    .admin-product {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .admin-product img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 7px;
+      background: #f2f2f2;
+    }
+
+    .admin-product h3 {
+      margin: 0 0 6px;
+    }
+
+    .admin-product p {
+      margin: 4px 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .admin-product-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .admin-product-actions button {
+      padding: 7px 10px;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background: #eee;
+    }
+
+    .delete-btn {
+      background: #ff6b6b;
+      color: #fff;
+    }
+
+    .admin-count {
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .featured-label {
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+
+    @media (max-width: 800px) {
+
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+<header class="site-header">
+
+  <div class="container">
+
+    <div class="logo">
+      Fashion Store — ADMIN
+    </div>
+
+    <nav>
+
+      <a href="index.html">
+        Trang chủ
+      </a>
+
+      <a href="products.html">
+        Sản phẩm
+      </a>
+
+      <a href="cart.html">
+        Giỏ hàng
+      </a>
+
+      <a href="account.html">
+        Tài khoản
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main class="container">
+
+  <h1>QUẢN LÝ SẢN PHẨM</h1>
+
+
+  <div class="admin-layout">
+
+
+    <!-- FORM -->
+
+    <div class="admin-box">
+
+      <h2 id="form-title">
+        Thêm sản phẩm
+      </h2>
+
+      <form
+        id="product-form"
+        class="admin-form"
+      >
+
+        <input
+          type="hidden"
+          id="product-id"
+        />
+
+
+        <label for="product-title">
+          Tên sản phẩm
+        </label>
+
+        <input
+          id="product-title"
+          type="text"
+          required
+          placeholder="Ví dụ: Áo thun Basic"
+        />
+
+
+        <label for="product-category">
+          Danh mục
+        </label>
+
+        <select
+          id="product-category"
+          required
+        >
+
+          <option value="ao">
+            Áo
+          </option>
+
+          <option value="quan">
+            Quần
+          </option>
+
+          <option value="vay">
+            Váy
+          </option>
+
+          <option value="aokhoac">
+            Áo khoác
+          </option>
+
+          <option value="phukien">
+            Phụ kiện
+          </option>
+
+          <option value="giay">
+            Giày
+          </option>
+
+        </select>
+
+
+        <label for="product-price">
+          Giá
+        </label>
+
+        <input
+          id="product-price"
+          type="number"
+          min="0"
+          required
+          placeholder="250000"
+        />
+
+
+        <label for="product-image">
+          Đường dẫn hình ảnh
+        </label>
+
+        <input
+          id="product-image"
+          type="text"
+          required
+          placeholder="image/aothun.webp"
+        />
+
+
+        <label>
+
+          <input
+            id="product-featured"
+            type="checkbox"
+          />
+
+          Sản phẩm nổi bật
+
+        </label>
+
+
+        <div class="admin-actions">
+
+          <button
+            class="btn"
+            type="submit"
+          >
+            Lưu sản phẩm
+          </button>
+
+          <button
+            class="btn btn-secondary"
+            type="button"
+            id="cancel-edit"
+            style="display:none"
+          >
+            Hủy sửa
+          </button>
+
+        </div>
+
+
+        <p
+          id="admin-message"
+          class="form-message"
+        ></p>
+
+      </form>
+
+    </div>
+
+
+    <!-- DANH SÁCH -->
+
+    <div class="admin-box">
+
+      <h2>
+        Danh sách sản phẩm
+      </h2>
+
+      <div
+        id="product-count"
+        class="admin-count"
+      ></div>
+
+      <div id="admin-products"></div>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<script src="js/script.js"></script>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+
+
+  const form =
+    document.getElementById('product-form');
+
+  const list =
+    document.getElementById('admin-products');
+
+  const count =
+    document.getElementById('product-count');
+
+  const message =
+    document.getElementById('admin-message');
+
+  const cancelEdit =
+    document.getElementById('cancel-edit');
+
+
+  function saveProducts(){
+
+    localStorage.setItem(
+      'fs_products',
+      JSON.stringify(products)
+    );
+
+  }
+
+
+  function renderAdminProducts(){
+
+    count.textContent =
+      `${products.length} sản phẩm`;
+
+
+    if(products.length === 0){
+
+      list.innerHTML =
+        '<p>Chưa có sản phẩm.</p>';
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      products.map(product => `
+
+        <div class="admin-product">
+
+          <img
+            src="${product.img}"
+            alt="${product.title}"
+            onerror="this.onerror=null;this.src='images/placeholder.jpg'"
+          />
+
+
+          <div>
+
+            <h3>
+              ${product.title}
+            </h3>
+
+            <p>
+              Danh mục:
+              ${product.category}
+            </p>
+
+            <p>
+              Giá:
+              ${formatVND(product.price)}
+            </p>
+
+            ${
+              product.featured
+                ? '<span class="featured-label">★ Nổi bật</span>'
+                : ''
+            }
+
+          </div>
+
+
+          <div class="admin-product-actions">
+
+            <button
+              class="edit-btn"
+              onclick="editProduct(${product.id})"
+            >
+              Sửa
+            </button>
+
+            <button
+              class="delete-btn"
+              onclick="deleteProduct(${product.id})"
+            >
+              Xóa
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join('');
+
+  }
+
+
+  window.editProduct = function(id){
+
+    const product =
+      products.find(p => p.id === id);
+
+    if(!product) return;
+
+
+    document.getElementById('product-id').value =
+      product.id;
+
+    document.getElementById('product-title').value =
+      product.title;
+
+    document.getElementById('product-category').value =
+      product.category;
+
+    document.getElementById('product-price').value =
+      product.price;
+
+    document.getElementById('product-image').value =
+      product.img;
+
+    document.getElementById('product-featured').checked =
+      !!product.featured;
+
+
+    document.getElementById('form-title').textContent =
+      'Sửa sản phẩm';
+
+    cancelEdit.style.display =
+      'inline-block';
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+  };
+
+
+  window.deleteProduct = function(id){
+
+    const product =
+      products.find(p => p.id === id);
+
+    if(!product) return;
+
+
+    const confirmDelete =
+      confirm(
+        `Bạn có chắc muốn xóa "${product.title}"?`
+      );
+
+    if(!confirmDelete) return;
+
+
+    products =
+      products.filter(p => p.id !== id);
+
+    saveProducts();
+
+    renderAdminProducts();
+
+    message.className =
+      'form-message success';
+
+    message.textContent =
+      'Đã xóa sản phẩm.';
+
+  };
+
+
+  form.addEventListener('submit', event => {
+
+    event.preventDefault();
+
+
+    const id =
+      document.getElementById('product-id').value;
+
+    const title =
+      document.getElementById('product-title').value.trim();
+
+    const category =
+      document.getElementById('product-category').value;
+
+    const price =
+      Number(
+        document.getElementById('product-price').value
+      );
+
+    const img =
+      document.getElementById('product-image').value.trim();
+
+    const featured =
+      document.getElementById('product-featured').checked;
+
+
+    if(id){
+
+      const product =
+        products.find(
+          p => p.id === Number(id)
+        );
+
+      if(product){
+
+        product.title = title;
+        product.category = category;
+        product.price = price;
+        product.img = img;
+        product.featured = featured;
+
+      }
+
+      message.textContent =
+        'Đã cập nhật sản phẩm.';
+
+    } else {
+
+      const newId =
+        products.length > 0
+          ? Math.max(...products.map(p => p.id)) + 1
+          : 1;
+
+
+      products.push({
+
+        id: newId,
+        title: title,
+        category: category,
+        price: price,
+        img: img,
+        featured: featured
+
+      });
+
+
+      message.textContent =
+        'Đã thêm sản phẩm.';
+
+    }
+
+
+    saveProducts();
+
+    renderAdminProducts();
+
+    message.className =
+      'form-message success';
+
+
+    form.reset();
+
+    document.getElementById('product-id').value =
+      '';
+
+    document.getElementById('form-title').textContent =
+      'Thêm sản phẩm';
+
+    cancelEdit.style.display =
+      'none';
+
+  });
+
+
+  cancelEdit.addEventListener('click', () => {
+
+    form.reset();
+
+    document.getElementById('product-id').value =
+      '';
+
+    document.getElementById('form-title').textContent =
+      'Thêm sản phẩm';
+
+    cancelEdit.style.display =
+      'none';
+
+    message.textContent =
+      '';
+
+  });
+
+
+  renderAdminProducts();
+
+});
+
+</script>
+
+</body>
+</html>
