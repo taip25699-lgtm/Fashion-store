@@ -1,1 +1,119 @@
+<!doctype html>
+<html lang="vi">
 
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Tài khoản — Fashion Store</title>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container">
+
+      <div class="logo">
+        Fashion Store
+      </div>
+
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="cart.html">
+          Giỏ hàng <span id="cart-count">0</span>
+        </a>
+        <a href="account.html">Tài khoản</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <main class="container auth-page">
+
+    <div class="auth-card">
+
+      <h1>THÔNG TIN TÀI KHOẢN</h1>
+
+      <div id="account-info">
+
+        <p>
+          <strong>Họ và tên:</strong>
+          <span id="account-name"></span>
+        </p>
+
+        <p>
+          <strong>Email:</strong>
+          <span id="account-email"></span>
+        </p>
+
+        <p>
+          <strong>Vai trò:</strong>
+          <span id="account-role"></span>
+        </p>
+
+      </div>
+
+      <button
+        class="btn"
+        type="button"
+        onclick="logoutUser()">
+        Đăng xuất
+      </button>
+
+      <p
+        id="account-message"
+        class="form-message">
+      </p>
+
+    </div>
+
+  </main>
+
+
+  <script src="js/script.js"></script>
+
+  <script>
+
+    function logoutUser(){
+
+      localStorage.removeItem('fs_user');
+
+      window.location.href = 'login.html';
+
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+      updateCartCountUI();
+
+      const user = getUser();
+
+      if(!user){
+
+        window.location.href = 'login.html';
+        return;
+
+      }
+
+      document.getElementById('account-name').textContent =
+        user.name;
+
+      document.getElementById('account-email').textContent =
+        user.email;
+
+      document.getElementById('account-role').textContent =
+        user.role === 'customer'
+          ? 'Khách hàng'
+          : user.role;
+
+    });
+
+  </script>
+
+</body>
+</html>
