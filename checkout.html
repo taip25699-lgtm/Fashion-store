@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng ký — Fashion Store</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">Fashion Store</div>
+      <nav>
+        <a href="index.html">Trang chủ</a>
+        <a href="products.html">Sản phẩm</a>
+        <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
+        <a href="login.html">Đăng nhập</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container auth-page">
+    <div class="auth-card wider">
+      <h1>ĐĂNG KÝ</h1>
+      <p class="auth-note">Tạo tài khoản mới để theo dõi đơn hàng và mua sắm tiện lợi.</p>
+
+      <form id="register-form" class="auth-form">
+        <label for="reg-name">Họ và tên</label>
+        <input id="reg-name" name="name" type="text" required placeholder="Nguyễn Văn A" />
+
+        <label for="reg-email">Email</label>
+        <input id="reg-email" name="email" type="email" required placeholder="you@example.com" />
+
+        <label for="reg-phone">Số điện thoại</label>
+        <input id="reg-phone" name="phone" type="tel" required placeholder="0912 345 678" />
+
+        <label for="reg-password">Mật khẩu</label>
+        <input id="reg-password" name="password" type="password" required placeholder="Nhập mật khẩu" />
+
+        <button class="btn" type="submit">Đăng ký</button>
+        <p id="register-message" class="form-message" role="alert"></p>
+      </form>
+
+      <p class="demo-account">Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+    </div>
+  </main>
+
+  <script src="js/script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCountUI();
+      document.getElementById('register-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const form = event.target;
+        const message = document.getElementById('register-message');
+        const result = registerUser({
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          password: form.password.value.trim()
+        });
+
+        if (result.success) {
+          message.className = 'form-message success';
+          message.textContent = 'Đăng ký thành công. Đang chuyển tới trang đăng nhập...';
+          setTimeout(() => { window.location.href = 'login.html'; }, 700);
+        } else {
+          message.className = 'form-message error';
+          message.textContent = result.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
