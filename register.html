@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chi tiết đơn hàng — Fashion Store</title>
+  <title>Thanh toán — Fashion Store</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -19,16 +19,16 @@
     </div>
   </header>
 
-  <main class="container order-page">
-    <div id="order-root"></div>
+  <main class="container checkout-page">
+    <h1>THANH TOÁN</h1>
+    <div id="checkout-root"></div>
   </main>
 
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      renderOrderDetail('#order-root');
+      renderCheckout('#checkout-root');
       updateCartCountUI();
-      updateAuthUI();
     });
   </script>
 </body>

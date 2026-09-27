@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fashion Store</title>
+  <title>Sản phẩm — Fashion Store</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -13,39 +13,78 @@
       <nav>
         <a href="index.html">Trang chủ</a>
         <a href="products.html">Sản phẩm</a>
+        <a href="clothes.html">Quần áo</a>
+        <a href="accessories.html">Phụ kiện</a>
         <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
         <a href="about.html">Giới thiệu</a>
+        <a href="login.html" id="auth-link">Đăng nhập</a>
       </nav>
     </div>
   </header>
 
-  <main>
-    <section class="banner">
-      <div class="container">
-        <h1>Bộ sưu tập mùa hè</h1>
-        <p>Phong cách trẻ trung — Giá hợp lý</p>
-        <a class="btn" href="products.html">Mua ngay</a>
-      </div>
+  <main class="container">
+    <h1>SẢN PHẨM</h1>
+
+    <section class="category-grid">
+      <a class="category-card" href="clothes.html">
+        <img src="image/ab_home_banner_1_img.webp" alt="Quần áo">
+        <div class="cat-info"><h3>Quần áo</h3><p>Áo, Quần, Váy, Áo khoác</p></div>
+      </a>
+      <a class="category-card" href="accessories.html">
+        <img src="image/ab_home_banner_2_img.webp" alt="Phụ kiện">
+        <div class="cat-info"><h3>Phụ kiện</h3><p>Nón, Túi, Kính, Phụ kiện thời trang</p></div>
+      </a>
     </section>
 
-    <section class="featured container">
-      <h2>Sản phẩm nổi bật</h2>
-      <div id="featured-products" class="grid"></div>
-    </section>
+    <div class="product-tools">
+      <label class="search-box" for="product-search">
+        <span>Tìm kiếm sản phẩm</span>
+        <input id="product-search" type="search" placeholder="Nhập tên sản phẩm..." autocomplete="off">
+      </label>
+      <span id="search-result-count" class="result-count"></span>
+    </div>
+
+    <div class="filters" style="margin-top:20px">
+      <button class="btn" data-filter="all">Tất cả</button>
+      <button class="btn" data-filter="ao">Áo</button>
+      <button class="btn" data-filter="quan">Quần</button>
+      <button class="btn" data-filter="vay">Váy</button>
+      <button class="btn" data-filter="aokhoac">Áo khoác</button>
+      <button class="btn" data-filter="phukien">Phụ kiện</button>
+      <button class="btn" data-filter="giay">Giày</button>
+    </div>
+
+    <div id="products-grid" class="grid"></div>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <p>© 2026 Fashion Store — Liên hệ: 2311560465@nttu.edu.vn</p>
-    </div>
-  </footer>
+  <footer class="site-footer"><div class="container"><p>© 2026 Fashion Store</p></div></footer>
 
   <script src="js/script.js"></script>
   <script>
-    // render 3 sản phẩm nổi bật vào index (sử dụng products array trong script.js)
     document.addEventListener('DOMContentLoaded', () => {
-      renderProducts('#featured-products', { limit: 3, featured: true });
+      let activeCategory = 'all';
+      const search = document.getElementById('product-search');
+      const resultCount = document.getElementById('search-result-count');
+
+      function showProducts() {
+        const keyword = search.value.trim();
+        const visibleCount = renderProducts('#products-grid', {
+          category: activeCategory,
+          search: keyword
+        });
+        resultCount.textContent = `${visibleCount} sản phẩm`;
+      }
+
+      showProducts();
       updateCartCountUI();
+      updateAuthUI();
+      search.addEventListener('input', showProducts);
+      document.querySelectorAll('.filters .btn').forEach(button => {
+        button.addEventListener('click', () => {
+          activeCategory = button.dataset.filter;
+          showProducts();
+        });
+      });
     });
   </script>
 </body>

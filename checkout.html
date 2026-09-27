@@ -1,75 +1,125 @@
-<!doctype html>
-<html lang="vi">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Đăng ký — Fashion Store</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="container">
-      <div class="logo">Fashion Store</div>
-      <nav>
-        <a href="index.html">Trang chủ</a>
-        <a href="products.html">Sản phẩm</a>
-        <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
-        <a href="login.html">Đăng nhập</a>
-      </nav>
-    </div>
-  </header>
+:root{
+  --primary:#ff6b6b;
+  --dark:#222;
+  --muted:#666;
+  --container:1100px;
+  --card-bg:#fff;
+  --line:#e8e8e8;
+  --success:#2e7d32;
+  --warning:#d97706;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
+}
 
-  <main class="container auth-page">
-    <div class="auth-card wider">
-      <h1>ĐĂNG KÝ</h1>
-      <p class="auth-note">Tạo tài khoản mới để theo dõi đơn hàng và mua sắm tiện lợi.</p>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter, system-ui, Arial, sans-serif;
+  color:var(--dark);
+  background:#f6f6f8;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
 
-      <form id="register-form" class="auth-form">
-        <label for="reg-name">Họ và tên</label>
-        <input id="reg-name" name="name" type="text" required placeholder="Nguyễn Văn A" />
+.container{max-width:var(--container);margin:0 auto;padding:0 16px}
+.site-header{background:#fff;border-bottom:1px solid #eee}
+.site-header .container{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
+.logo{font-weight:700;color:var(--primary);font-size:18px}
+.site-header nav a{margin-left:16px;color:var(--muted);text-decoration:none;font-size:15px}
 
-        <label for="reg-email">Email</label>
-        <input id="reg-email" name="email" type="email" required placeholder="you@example.com" />
+.banner{position:relative;width:100vw;margin-left:calc(50% - 50vw);min-height:780px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:#eee}
+.banner::before{content:"";position:absolute;inset:0;background-image:url("../image/Ao_thun_c_tron.webp");background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.6;z-index:0}
+.banner::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.15);z-index:0}
+.banner .container{position:relative;z-index:1;width:100%;max-width:1100px;padding:48px 16px}
+.banner h1{margin:0 0 12px;font-size:48px;line-height:1.1;color:#fff;text-shadow:3px 3px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+.banner p{margin:0 0 20px;font-size:19px;font-weight:600;color:#fff;text-shadow:2px 2px 3px #000,-1px -1px 2px #000,1px 1px 2px #000}
+.btn{display:inline-block;background:var(--primary);color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;border:0;cursor:pointer;text-shadow:1px 1px 2px rgba(0,0,0,.4);box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.btn-outline{background:#fff;color:var(--dark);border:1px solid var(--line);box-shadow:none;text-shadow:none}
 
-        <label for="reg-phone">Số điện thoại</label>
-        <input id="reg-phone" name="phone" type="tel" required placeholder="0912 345 678" />
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card-bg);padding:12px;border-radius:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.card img{width:100%;height:200px;object-fit:cover;border-radius:6px}
+.card h3{margin:8px 0 4px;font-size:18px}
+.card p.price{color:var(--primary);font-weight:600}
+.card .actions{margin-top:auto;display:flex;gap:8px}
 
-        <label for="reg-password">Mật khẩu</label>
-        <input id="reg-password" name="password" type="password" required placeholder="Nhập mật khẩu" />
+.filters{margin:16px 0}
+.filters .btn{background:#fff;color:var(--muted);border:1px solid #eee;box-shadow:none;text-shadow:none}
 
-        <button class="btn" type="submit">Đăng ký</button>
-        <p id="register-message" class="form-message" role="alert"></p>
-      </form>
+.category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:16px 0}
+.category-card{display:block;background:#fff;border-radius:8px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.category-card img{width:100%;height:450px;object-fit:cover;display:block}
+.category-card .cat-info{padding:12px}
+.category-card .cat-info h3{margin:0 0 6px}
+.category-card .cat-info p{margin:0;color:var(--muted);font-size:14px}
 
-      <p class="demo-account">Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
-    </div>
-  </main>
+.site-footer{padding:28px 0;color:var(--muted);text-align:center;margin-top:40px;background:transparent}
+.hidden{display:none}
 
-  <script src="js/script.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      updateCartCountUI();
-      document.getElementById('register-form').addEventListener('submit', event => {
-        event.preventDefault();
-        const form = event.target;
-        const message = document.getElementById('register-message');
-        const result = registerUser({
-          name: form.name.value.trim(),
-          email: form.email.value.trim(),
-          phone: form.phone.value.trim(),
-          password: form.password.value.trim()
-        });
+.product-tools{display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin-top:22px}
+.search-box{display:flex;flex-direction:column;gap:6px;font-weight:600;min-width:280px;flex:1;max-width:520px}
+.search-box input{padding:12px 14px;border:1px solid #ddd;border-radius:8px;font:inherit;background:#fff}
+.search-box input:focus{outline:2px solid rgba(255,107,107,.3);border-color:var(--primary)}
+.result-count{color:var(--muted);padding-bottom:12px;font-weight:600}
+.empty-result{grid-column:1/-1;text-align:center;padding:28px;background:#fff;border-radius:8px;color:var(--muted)}
 
-        if (result.success) {
-          message.className = 'form-message success';
-          message.textContent = 'Đăng ký thành công. Đang chuyển tới trang đăng nhập...';
-          setTimeout(() => { window.location.href = 'login.html'; }, 700);
-        } else {
-          message.className = 'form-message error';
-          message.textContent = result.message;
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+.auth-page{display:flex;justify-content:center;padding-top:48px}
+.auth-card{width:100%;max-width:460px;background:#fff;padding:28px;border-radius:12px;box-shadow:var(--shadow)}
+.auth-card.wider{max-width:500px}
+.auth-card h1{text-align:center;margin-top:0}
+.auth-note,.demo-account{color:var(--muted);font-size:14px}
+.auth-form{display:flex;flex-direction:column;gap:8px}
+.auth-form label{font-weight:600;margin-top:8px}
+.auth-form input,.auth-form textarea{padding:12px;border:1px solid #ddd;border-radius:7px;font:inherit}
+.auth-form textarea{min-height:90px;resize:vertical}
+.auth-form .btn{margin-top:12px}
+.form-message{min-height:20px;margin:8px 0 0;font-size:14px}
+.form-message.success{color:#16803c}
+.form-message.error{color:#c62828}
+
+.checkout-page,.order-page{padding-top:32px}
+.checkout-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+.checkout-form,.checkout-summary-box,.order-detail-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;box-shadow:var(--shadow)}
+.checkout-form{display:flex;flex-direction:column;gap:12px}
+.checkout-form label{display:flex;flex-direction:column;gap:8px;font-weight:600}
+.checkout-summary-box h3,.order-detail-card h2,.status-box h3{margin-top:0}
+.checkout-item{display:grid;grid-template-columns:1.2fr .5fr .5fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.checkout-item:last-child{border-bottom:0}
+.total-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:14px;margin-top:12px;font-size:18px}
+
+.cart-item-row{display:flex;gap:12px;align-items:center}
+.cart-item-row img{width:120px;height:80px;object-fit:cover;border-radius:8px}
+.cart-item-content{flex:1}
+.cart-item-price{text-align:right}
+
+.order-header-row{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px}
+.status-box{background:#f8f8f8;border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:16px}
+.timeline{display:flex;gap:12px;list-style:none;padding:0;margin:0;flex-wrap:wrap}
+.timeline-step{padding:10px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--muted);min-width:110px;text-align:center}
+.timeline-step.done{background:#e7f7eb;color:var(--success);border-color:#b7e6c7}
+.order-meta{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:12px;padding:18px 0;border-bottom:1px solid var(--line)}
+.order-table{width:100%;border-collapse:collapse;margin-top:18px}
+.order-table th,.order-table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left}
+.order-total-row{display:flex;justify-content:space-between;align-items:center;padding-top:18px;font-size:1.2rem}
+.checkout-summary{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:1.1rem}
+
+@media (max-width: 900px) {
+  .banner { min-height:400px; }
+  .banner h1 { font-size:34px; }
+  .checkout-layout { grid-template-columns:1fr; }
+  .order-meta { grid-template-columns:1fr; }
+}
+
+@media (max-width: 600px) {
+  .site-header .container { align-items:flex-start; gap:12px; flex-direction:column; }
+  .site-header nav a { margin:0 12px 0 0; display:inline-block; }
+  .banner { min-height:400px; }
+  .banner h1 { font-size:26px; }
+  .banner p { font-size:14px; }
+  .product-tools { align-items:stretch; }
+  .search-box { max-width:none; }
+  .result-count { padding-bottom:0; }
+  .timeline { flex-direction:column; }
+  .checkout-item { grid-template-columns:1fr; }
+  .order-header-row { flex-direction:column; align-items:flex-start; }
+}

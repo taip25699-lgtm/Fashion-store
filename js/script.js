@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chi tiết đơn hàng — Fashion Store</title>
+  <title>Đăng nhập — Fashion Store</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -14,20 +14,47 @@
         <a href="index.html">Trang chủ</a>
         <a href="products.html">Sản phẩm</a>
         <a href="cart.html">Giỏ hàng <span id="cart-count">0</span></a>
-        <a href="login.html">Đăng nhập</a>
+        <a href="register.html">Đăng ký</a>
       </nav>
     </div>
   </header>
 
-  <main class="container order-page">
-    <div id="order-root"></div>
+  <main class="container auth-page">
+    <div class="auth-card">
+      <h1>ĐĂNG NHẬP</h1>
+      <p class="auth-note">Đăng nhập để tiếp tục mua sắm tại Fashion Store.</p>
+      <form id="login-form" class="auth-form">
+        <label for="login-email">Email</label>
+        <input id="login-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+
+        <label for="login-password">Mật khẩu</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu" />
+
+        <button class="btn" type="submit">Đăng nhập</button>
+        <p id="login-message" class="form-message" role="alert"></p>
+      </form>
+      <p class="demo-account">Tài khoản demo: <strong>demo@fashionstore.vn</strong> / <strong>123456</strong> | <a href="register.html">Đăng ký</a></p>
+    </div>
   </main>
 
   <script src="js/script.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      renderOrderDetail('#order-root');
       updateCartCountUI();
+      document.getElementById('login-form').addEventListener('submit', event => {
+        event.preventDefault();
+        const form = event.target;
+        const message = document.getElementById('login-message');
+        const success = loginUser(form.email.value, form.password.value);
+        if (success) {
+          message.className = 'form-message success';
+          message.textContent = 'Đăng nhập thành công. Đang chuyển về trang sản phẩm...';
+          setTimeout(() => { window.location.href = 'products.html'; }, 700);
+        } else {
+          message.className = 'form-message error';
+          message.textContent = 'Email hoặc mật khẩu không đúng.';
+        }
+      });
     });
   </script>
 </body>
